@@ -27,7 +27,7 @@ export class RashfaDatabase extends Dexie {
 
   constructor() {
     super('RashfaDB');
-    this.version(3).stores({
+    this.version(4).stores({
       drinks: 'id, category, active',
       modifiers: 'id, active',
       expenseShortcuts: 'id, category, active',
@@ -42,11 +42,16 @@ export class RashfaDatabase extends Dexie {
   }
 
   async seedIfEmpty() {
-    const drinkCount = await this.drinks.count();
-    if (drinkCount === 0) {
+    // Clear and update drink catalog to match real menu JSON
+    const existingDrinks = await this.drinks.toArray();
+    const hasOldSeed = existingDrinks.some((d) => d.id === 'drink_exp' && d.defaultPriceMAD === 12);
+    if (existingDrinks.length === 0 || hasOldSeed) {
+      await this.drinks.clear();
       await this.drinks.bulkAdd(INITIAL_DRINKS);
+      await this.modifiers.clear();
       await this.modifiers.bulkAdd(INITIAL_MODIFIERS);
     }
+
     const shortcutCount = await this.expenseShortcuts.count();
     if (shortcutCount === 0) {
       await this.expenseShortcuts.bulkAdd(INITIAL_EXPENSE_SHORTCUTS);

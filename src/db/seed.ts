@@ -1,43 +1,67 @@
 import { Drink, Modifier, ExpenseShortcut, PersonalSpendShortcut } from '../types';
 
 export const INITIAL_DRINKS: Drink[] = [
-  // Hot Coffee & Espresso
-  { id: 'drink_exp', name: 'Espresso', category: 'hot', defaultPriceMAD: 12, costToMakeMAD: 3.5, beanWeightGrams: 9, isEspressoBased: true, active: true },
-  { id: 'drink_db_exp', name: 'Double Espresso', category: 'hot', defaultPriceMAD: 18, costToMakeMAD: 6.5, beanWeightGrams: 18, isEspressoBased: true, active: true },
-  { id: 'drink_ness', name: 'Ness Ness', category: 'hot', defaultPriceMAD: 13, costToMakeMAD: 4.2, beanWeightGrams: 9, isEspressoBased: true, active: true },
-  { id: 'drink_cream', name: 'Café Crème', category: 'hot', defaultPriceMAD: 14, costToMakeMAD: 4.8, beanWeightGrams: 9, isEspressoBased: true, active: true },
-  { id: 'drink_cap', name: 'Cappuccino', category: 'hot', defaultPriceMAD: 16, costToMakeMAD: 5.5, beanWeightGrams: 9, isEspressoBased: true, active: true },
-  { id: 'drink_tea', name: 'Thé Marocain (Tea)', category: 'hot', defaultPriceMAD: 10, costToMakeMAD: 2.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_hot_choc', name: 'Hot Chocolate', category: 'hot', defaultPriceMAD: 18, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_blk_choc', name: 'Black Chocolate', category: 'hot', defaultPriceMAD: 20, costToMakeMAD: 7.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  // Category: Coffee (Hot & Iced)
+  { id: 'drink_exp', name: 'Espresso', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 2.2, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_db_exp', name: 'Double Espresso', category: 'hot', defaultPriceMAD: 12, costToMakeMAD: 4.2, beanWeightGrams: 18, isEspressoBased: true, active: true },
+  { id: 'drink_hot_choc', name: 'Hot Choclate', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 2.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ness', name: 'Ness Ness', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 2.5, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_americano', name: 'Americano', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 2.2, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_latte', name: 'Latte', category: 'hot', defaultPriceMAD: 16, costToMakeMAD: 4.5, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_cap', name: 'Cappucino', category: 'hot', defaultPriceMAD: 14, costToMakeMAD: 4.0, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_cortado', name: 'Cortado', category: 'hot', defaultPriceMAD: 14, costToMakeMAD: 3.8, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_mocha', name: 'Mocha', category: 'hot', defaultPriceMAD: 16, costToMakeMAD: 4.8, beanWeightGrams: 9, isEspressoBased: true, active: true },
+  { id: 'drink_iced_americano', name: 'Iced Americano', category: 'cold', defaultPriceMAD: 9, costToMakeMAD: 2.8, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_iced_latte', name: 'Iced Latte', category: 'cold', defaultPriceMAD: 18, costToMakeMAD: 5.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_iced_cap', name: 'Iced Cappucino', category: 'cold', defaultPriceMAD: 16, costToMakeMAD: 5.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_iced_mocha', name: 'Iced Mocha', category: 'cold', defaultPriceMAD: 18, costToMakeMAD: 5.8, beanWeightGrams: 14, isEspressoBased: true, active: true },
 
-  // Cold Coffee & Drinks
-  { id: 'drink_iced_latte', name: 'Iced Latte', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_iced_cap', name: 'Iced Cappuccino', category: 'cold', defaultPriceMAD: 22, costToMakeMAD: 7.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_iced_mocha', name: 'Iced Mocha', category: 'cold', defaultPriceMAD: 24, costToMakeMAD: 8.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_frap', name: 'Frappuccino', category: 'cold', defaultPriceMAD: 24, costToMakeMAD: 8.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_milkshake', name: 'Milkshake', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 9.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_smoothie', name: 'Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 9.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  // Category: Moroccan Tea
+  { id: 'drink_atay', name: 'Atay Mna3ne3', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 1.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Mojitos
-  { id: 'drink_moj_chef', name: 'Mojito Chefchaouen', category: 'mojito', defaultPriceMAD: 25, costToMakeMAD: 8.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_moj_zahra', name: 'Mojito Zahra', category: 'mojito', defaultPriceMAD: 25, costToMakeMAD: 8.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_moj_classic', name: 'Mojito Classic', category: 'mojito', defaultPriceMAD: 22, costToMakeMAD: 7.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  // Category: Milkshake
+  { id: 'drink_ms_vanilla', name: 'Vanilla Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_choc', name: 'Chocolate Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_oreo', name: 'Oreo Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 7.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_straw', name: 'Strawberry Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Water & Refreshment
-  { id: 'drink_water', name: 'Water (Eau)', category: 'water_other', defaultPriceMAD: 5, costToMakeMAD: 1.8, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_goblet', name: 'Gobelet Emporter', category: 'water_other', defaultPriceMAD: 2, costToMakeMAD: 0.4, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_hic', name: 'HIC / Canette', category: 'water_other', defaultPriceMAD: 10, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_hawaii', name: 'Hawaii Soda', category: 'water_other', defaultPriceMAD: 12, costToMakeMAD: 5.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  // Category: Mojito
+  { id: 'drink_moj_salam', name: 'Salam (Classic Mojito)', category: 'mojito', defaultPriceMAD: 14, costToMakeMAD: 4.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_moj_chef', name: 'Chefchaouen (Blue Mojito)', category: 'mojito', defaultPriceMAD: 15, costToMakeMAD: 5.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_moj_zahra', name: 'Zahra (Strawberry Mojito)', category: 'mojito', defaultPriceMAD: 15, costToMakeMAD: 5.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+
+  // Category: Spark & Fizz
+  { id: 'drink_soda', name: 'Soda (Coca, Sprite, Poms, Hawai)', category: 'water_other', defaultPriceMAD: 8, costToMakeMAD: 4.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_redbull', name: 'Redbull', category: 'water_other', defaultPriceMAD: 25, costToMakeMAD: 14.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+
+  // Category: Frappuccino
+  { id: 'drink_frap_caramel', name: 'Frappe Caramel', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_vanilla', name: 'Frappe Vanilla', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_hazelnut', name: 'Frappe Hazelnut', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_choc', name: 'Frappe Chocolate', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_oreo', name: 'Frappe Oreo', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+
+  // Category: Juices
+  { id: 'drink_juice_apple', name: 'Apple Juice', category: 'cold', defaultPriceMAD: 12, costToMakeMAD: 4.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_juice_banana', name: 'Banana Juice', category: 'cold', defaultPriceMAD: 12, costToMakeMAD: 3.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_juice_orange', name: 'Orange Juice', category: 'cold', defaultPriceMAD: 12, costToMakeMAD: 3.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_juice_avocado', name: 'Avocado Juice', category: 'cold', defaultPriceMAD: 15, costToMakeMAD: 5.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+
+  // Category: Smoothies
+  { id: 'drink_sm_ananas', name: 'Ananas Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_banana', name: 'Banana Smoothie', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_avocado', name: 'Avocado Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_straw', name: 'Strawberry Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_choc', name: 'Chocolate Smoothie', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
 ];
 
 export const INITIAL_MODIFIERS: Modifier[] = [
-  { id: 'mod_caramel', name: 'Caramel', priceUpchargeMAD: 0, active: true },
-  { id: 'mod_vanilla', name: 'Vanilla', priceUpchargeMAD: 0, active: true },
-  { id: 'mod_chocolate', name: 'Chocolate', priceUpchargeMAD: 0, active: true },
-  { id: 'mod_pistachio', name: 'Pistachio', priceUpchargeMAD: 0, active: true },
+  { id: 'mod_flavor_joy', name: 'Add Flavor (+3 MAD)', priceUpchargeMAD: 3, active: true },
+  { id: 'mod_caramel', name: 'Caramel Flavor', priceUpchargeMAD: 3, active: true },
+  { id: 'mod_vanilla', name: 'Vanilla Flavor', priceUpchargeMAD: 3, active: true },
+  { id: 'mod_pistachio', name: 'Pistachio Flavor', priceUpchargeMAD: 3, active: true },
+  { id: 'mod_hazelnut', name: 'Hazelnut Flavor', priceUpchargeMAD: 3, active: true },
   { id: 'mod_extra_shot', name: 'Extra Shot Espresso', priceUpchargeMAD: 5, active: true },
-  { id: 'mod_oat_milk', name: 'Oat Milk', priceUpchargeMAD: 4, active: true },
 ];
 
 export const INITIAL_EXPENSE_SHORTCUTS: ExpenseShortcut[] = [
