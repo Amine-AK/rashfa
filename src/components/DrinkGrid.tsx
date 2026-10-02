@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Drink, DrinkCategory, Modifier } from '../types';
-import { Plus, Check, Undo2, Flame, Snowflake, Citrus, Droplets, Sparkles, AlertCircle } from 'lucide-react';
+import { Plus, Check, Undo2, Flame, Snowflake, Citrus, Droplets, Sparkles, AlertCircle, Sparkle, X } from 'lucide-react';
 
 interface DrinkGridProps {
   drinks: Drink[];
@@ -27,6 +27,17 @@ export const DrinkGrid: React.FC<DrinkGridProps> = ({
   const [activeModifiers, setActiveModifiers] = useState<Modifier[]>([]);
   const [kossorReason, setKossorReason] = useState<'staff' | 'comp' | 'waste'>('staff');
   const [tappedDrinkId, setTappedDrinkId] = useState<string | null>(null);
+  const [showCustomModModal, setShowCustomModModal] = useState(false);
+
+  // Default +3 DH Flavor Modifier
+  const defaultFlavorMod: Modifier = modifiers.find((m) => m.id === 'mod_flavor_joy') || {
+    id: 'mod_flavor_joy',
+    name: 'Flavor (+3 MAD)',
+    priceUpchargeMAD: 3,
+    active: true,
+  };
+
+  const isFlavorActive = activeModifiers.some((m) => m.id === defaultFlavorMod.id);
 
   const categories: { id: DrinkCategory | 'all'; label: string; icon: React.ReactNode }[] = [
     { id: 'all', label: 'All Drinks', icon: <Sparkles className="w-3.5 h-3.5" /> },
@@ -40,7 +51,15 @@ export const DrinkGrid: React.FC<DrinkGridProps> = ({
     (d) => d.active && (selectedCategory === 'all' || d.category === selectedCategory)
   );
 
-  const toggleModifier = (mod: Modifier) => {
+  const toggleFlavor = () => {
+    if (isFlavorActive) {
+      setActiveModifiers((prev) => prev.filter((m) => m.id !== defaultFlavorMod.id));
+    } else {
+      setActiveModifiers((prev) => [...prev, defaultFlavorMod]);
+    }
+  };
+
+  const toggleCustomModifier = (mod: Modifier) => {
     setActiveModifiers((prev) =>
       prev.some((m) => m.id === mod.id)
         ? prev.filter((m) => m.id !== mod.id)
@@ -114,31 +133,54 @@ export const DrinkGrid: React.FC<DrinkGridProps> = ({
         </div>
       )}
 
-      {/* Modifier Selector Bar (Tap to toggle before tapping drink) */}
-      {modifiers.length > 0 && (
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider shrink-0 mr-1">
-            Modifiers:
-          </span>
-          {modifiers.map((mod) => {
-            const isSelected = activeModifiers.some((m) => m.id === mod.id);
-            return (
-              <button
+      {/* SLEEK MINIMALIST MODIFIER BAR: Single Flavor (+3 DH) Pill + Custom Modifiers Option */}
+      <div className="flex items-center justify-between gap-2 bg-stone-900/90 border border-stone-800 p-2 rounded-2xl">
+        <div className="flex items-center gap-2">
+          {/* Main Clean Flavor Button (+3 DH) */}
+          <button
+            type="button"
+            onClick={toggleFlavor}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border shadow ${
+              isFlavorActive
+                ? 'bg-amber-500 text-stone-950 border-amber-300 scale-105 shadow-amber-500/20'
+                : 'bg-stone-950 text-stone-300 border-stone-800 hover:border-amber-500/50 hover:text-amber-300'
+            }`}
+          >
+            <Sparkle className={`w-4 h-4 ${isFlavorActive ? 'fill-stone-950' : 'text-amber-400'}`} />
+            <span>Add Flavor (+3 DH)</span>
+            {isFlavorActive && <Check className="w-3.5 h-3.5 ml-0.5" />}
+          </button>
+
+          {/* Active Custom Modifier Badges */}
+          {activeModifiers
+            .filter((m) => m.id !== defaultFlavorMod.id)
+            .map((mod) => (
+              <span
                 key={mod.id}
-                onClick={() => toggleModifier(mod)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all border ${
-                  isSelected
-                    ? 'bg-amber-600 text-white border-amber-400 shadow-md font-bold'
-                    : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-stone-700'
-                }`}
+                className="bg-amber-950 text-amber-300 border border-amber-700 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1"
               >
-                {mod.name}
-                {mod.priceUpchargeMAD > 0 && ` (+${mod.priceUpchargeMAD} MAD)`}
-              </button>
-            );
-          })}
+                <span>{mod.name}</span>
+                <button
+                  type="button"
+                  onClick={() => toggleCustomModifier(mod)}
+                  className="hover:text-rose-400"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
         </div>
-      )}
+
+        {/* Custom Modifier Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setShowCustomModModal(!showCustomModModal)}
+          className="text-xs text-stone-400 hover:text-stone-200 font-medium px-2 py-1 rounded-lg hover:bg-stone-800 transition-all flex items-center gap-1 shrink-0"
+        >
+          <Plus className="w-3.5 h-3.5 text-amber-400" />
+          <span>More Mods</span>
+        </button>
+      </div>
 
       {/* Category Tabs */}
       <div className="grid grid-cols-5 gap-1.5">
@@ -200,13 +242,13 @@ export const DrinkGrid: React.FC<DrinkGridProps> = ({
                   {!isKossorMode ? (
                     <span className="text-lg font-black font-mono text-emerald-400 group-hover:text-emerald-300">
                       {finalPrice}{' '}
-                      <span className="text-xs font-semibold text-emerald-500">MAD</span>
+                      <span className="text-xs font-semibold text-emerald-500">DH</span>
                     </span>
                   ) : (
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-rose-400">KOSSOR (FREE)</span>
                       <span className="text-[10px] text-stone-400 font-mono">
-                        Cost: {drink.costToMakeMAD} MAD
+                        Cost: {drink.costToMakeMAD} DH
                       </span>
                     </div>
                   )}
@@ -225,6 +267,50 @@ export const DrinkGrid: React.FC<DrinkGridProps> = ({
           );
         })}
       </div>
+
+      {/* Custom Modifier Modal / Drawer */}
+      {showCustomModModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-stone-900 border border-amber-600/40 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+              <h4 className="font-bold text-stone-100 text-sm">Select Custom Modifiers</h4>
+              <button
+                onClick={() => setShowCustomModModal(false)}
+                className="text-stone-400 hover:text-stone-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {modifiers.map((mod) => {
+                const isSelected = activeModifiers.some((m) => m.id === mod.id);
+                return (
+                  <button
+                    key={mod.id}
+                    onClick={() => toggleCustomModifier(mod)}
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between border ${
+                      isSelected
+                        ? 'bg-amber-600 text-white border-amber-400 shadow'
+                        : 'bg-stone-950 text-stone-300 border-stone-800 hover:border-stone-700'
+                    }`}
+                  >
+                    <span>{mod.name}</span>
+                    <span className="font-mono">{mod.priceUpchargeMAD > 0 ? `+${mod.priceUpchargeMAD} DH` : 'Free'}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setShowCustomModModal(false)}
+              className="w-full py-2.5 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs shadow"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
