@@ -2,10 +2,21 @@ import { neon } from '@neondatabase/serverless';
 import { Drink, SaleEntry, KossorEntry, PurchaseEntry, DailyRecord } from '../types';
 
 /**
- * Neon PostgreSQL Client & Cloud Backup Sync Helper for Vercel
+ * Gets Neon PostgreSQL Client automatically checking Vercel Neon Integration variables
  */
+export function getNeonConnectionString(): string {
+  return (
+    import.meta.env.VITE_DATABASE_URL ||
+    import.meta.env.VITE_POSTGRES_URL ||
+    import.meta.env.VITE_POSTGRES_URL_NON_POOLING ||
+    import.meta.env.POSTGRES_URL ||
+    import.meta.env.POSTGRES_URL_NON_POOLING ||
+    ''
+  );
+}
+
 export function getNeonSql(connectionString?: string) {
-  const url = connectionString || import.meta.env.VITE_DATABASE_URL || '';
+  const url = connectionString || getNeonConnectionString();
   if (!url) return null;
   return neon(url);
 }
@@ -15,7 +26,7 @@ export function getNeonSql(connectionString?: string) {
  */
 export async function initNeonTables(connectionString: string) {
   const sql = getNeonSql(connectionString);
-  if (!sql) throw new Error('Database URL is required');
+  if (!sql) throw new Error('Neon PostgreSQL Database URL is required');
 
   await sql`
     CREATE TABLE IF NOT EXISTS drinks (

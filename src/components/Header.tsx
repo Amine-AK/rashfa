@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DailySummary } from '../types';
 import { Coffee, Lock, DollarSign, Gift, Layers, BarChart3, Receipt, Settings, ShoppingBag, Cloud, Check, X } from 'lucide-react';
-import { syncToNeonDB } from '../db/neon';
+import { syncToNeonDB, getNeonConnectionString } from '../db/neon';
 import { db } from '../db';
 
 interface HeaderProps {
@@ -20,26 +20,31 @@ export const Header: React.FC<HeaderProps> = ({
   setIsKossorMode,
 }) => {
   const [showSyncModal, setShowSyncModal] = useState(false);
-  const [neonUrl, setNeonUrl] = useState(import.meta.env.VITE_DATABASE_URL || '');
+  const [neonUrl, setNeonUrl] = useState(getNeonConnectionString());
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
+  useEffect(() => {
+    const autoUrl = getNeonConnectionString();
+    if (autoUrl) setNeonUrl(autoUrl);
+  }, []);
+
   const handleSyncToNeon = async () => {
     if (!neonUrl.trim()) {
-      alert('Please enter your Neon PostgreSQL Connection String (DATABASE_URL).');
+      alert('Please enter your Neon PostgreSQL Connection String (POSTGRES_URL or VITE_DATABASE_URL).');
       return;
     }
     try {
       setIsSyncing(true);
-      setSyncStatus('Connecting to Neon DB...');
+      setSyncStatus('Connecting to Neon DB on Vercel...');
       const drinks = await db.drinks.toArray();
       const records = await db.dailyRecords.toArray();
       const sales = await db.sales.toArray();
       const purchases = await db.purchases.toArray();
 
       await syncToNeonDB(neonUrl.trim(), drinks, records, sales, purchases);
-      setSyncStatus('Successfully backed up to Neon DB!');
-      setTimeout(() => setSyncStatus(null), 3000);
+      setSyncStatus('Successfully backed up to Neon PostgreSQL Database!');
+      setTimeout(() => setSyncStatus(null), 3500);
     } catch (err: any) {
       console.error(err);
       setSyncStatus(`Sync Error: ${err.message || 'Failed to sync'}`);
@@ -211,7 +216,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="flex items-center justify-between border-b border-stone-800 pb-2">
               <div className="flex items-center gap-2">
                 <Cloud className="w-5 h-5 text-cyan-400" />
-                <h4 className="font-bold text-stone-100 text-sm">Neon PostgreSQL Backup & Sync</h4>
+                <h4 className="font-bold text-stone-100 text-sm">Vercel Neon PostgreSQL Integration</h4>
               </div>
               <button onClick={() => setShowSyncModal(false)} className="text-stone-400 hover:text-stone-200">
                 <X className="w-5 h-5" />
@@ -220,11 +225,11 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="space-y-3">
               <p className="text-xs text-stone-400 leading-relaxed">
-                Connect your free <strong className="text-stone-200">Neon.tech</strong> PostgreSQL database to backup all sales, expenses, and daily closings to the cloud.
+                Vercel Neon Integration detected. You can sync all sales, drinks catalog, expenses, and closing records directly to your Neon database on Vercel.
               </p>
 
               <div>
-                <label className="text-xs text-stone-400 block mb-1">Neon DATABASE_URL</label>
+                <label className="text-xs text-stone-400 block mb-1">Database Connection String</label>
                 <input
                   type="password"
                   placeholder="postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require"
