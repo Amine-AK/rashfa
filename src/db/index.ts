@@ -27,7 +27,7 @@ export class RashfaDatabase extends Dexie {
 
   constructor() {
     super('RashfaDB');
-    this.version(5).stores({
+    this.version(6).stores({
       drinks: 'id, category, active',
       modifiers: 'id, active',
       expenseShortcuts: 'id, category, active',
@@ -42,10 +42,10 @@ export class RashfaDatabase extends Dexie {
   }
 
   async seedIfEmpty() {
-    // Clear and update drink catalog to match full menu JSON including Les Crêpes and Italian Hot Chocolate
+    // Clear and update drink catalog to match corrected close-up menu prices
     const existingDrinks = await this.drinks.toArray();
-    const hasCrepes = existingDrinks.some((d) => d.id === 'drink_crepe_nutella');
-    if (existingDrinks.length === 0 || !hasCrepes) {
+    const hasCorrectedFrappe = existingDrinks.some((d) => d.id === 'drink_frap_vanilla' && d.defaultPriceMAD === 32);
+    if (existingDrinks.length === 0 || !hasCorrectedFrappe) {
       await this.drinks.clear();
       await this.drinks.bulkAdd(INITIAL_DRINKS);
       await this.modifiers.clear();

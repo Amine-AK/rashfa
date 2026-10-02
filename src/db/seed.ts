@@ -19,11 +19,11 @@ export const INITIAL_DRINKS: Drink[] = [
   // Category: Moroccan Tea
   { id: 'drink_atay', name: 'Atay Mna3ne3', category: 'hot', defaultPriceMAD: 7, costToMakeMAD: 1.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Category: Milkshake
-  { id: 'drink_ms_vanilla', name: 'Vanilla Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_ms_choc', name: 'Chocolate Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_ms_oreo', name: 'Oreo Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 7.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_ms_straw', name: 'Strawberry Milkshake', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  // Category: Milkshake (Corrected to 25 MAD)
+  { id: 'drink_ms_vanilla', name: 'Vanilla Milkshake', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_choc', name: 'Chocolate Milkshake', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_oreo', name: 'Oreo Milkshake', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_ms_straw', name: 'Strawberry Milkshake', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
   // Category: Mojito
   { id: 'drink_moj_salam', name: 'Salam (Classic Mojito)', category: 'mojito', defaultPriceMAD: 14, costToMakeMAD: 4.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
@@ -34,12 +34,12 @@ export const INITIAL_DRINKS: Drink[] = [
   { id: 'drink_soda', name: 'Soda (Coca, Sprite, Poms, Hawai)', category: 'water_other', defaultPriceMAD: 8, costToMakeMAD: 4.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_redbull', name: 'Redbull', category: 'water_other', defaultPriceMAD: 25, costToMakeMAD: 14.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Category: Frappuccino
-  { id: 'drink_frap_caramel', name: 'Frappe Caramel', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_frap_vanilla', name: 'Frappe Vanilla', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_frap_hazelnut', name: 'Frappe Hazelnut', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_frap_choc', name: 'Frappe Chocolate', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
-  { id: 'drink_frap_oreo', name: 'Frappe Oreo', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  // Category: Frappuccino (Corrected: Caramel 29, Vanilla 32, Hazelnut 29, Chocolate 29, Oreo 29 MAD)
+  { id: 'drink_frap_caramel', name: 'Frappe Caramel', category: 'cold', defaultPriceMAD: 29, costToMakeMAD: 8.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_vanilla', name: 'Frappe Vanilla', category: 'cold', defaultPriceMAD: 32, costToMakeMAD: 9.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_hazelnut', name: 'Frappe Hazelnut', category: 'cold', defaultPriceMAD: 29, costToMakeMAD: 8.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_choc', name: 'Frappe Chocolate', category: 'cold', defaultPriceMAD: 29, costToMakeMAD: 8.5, beanWeightGrams: 14, isEspressoBased: true, active: true },
+  { id: 'drink_frap_oreo', name: 'Frappe Oreo', category: 'cold', defaultPriceMAD: 29, costToMakeMAD: 9.0, beanWeightGrams: 14, isEspressoBased: true, active: true },
 
   // Category: Juices
   { id: 'drink_juice_apple', name: 'Apple Juice', category: 'cold', defaultPriceMAD: 12, costToMakeMAD: 4.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
@@ -47,14 +47,14 @@ export const INITIAL_DRINKS: Drink[] = [
   { id: 'drink_juice_orange', name: 'Orange Juice', category: 'cold', defaultPriceMAD: 12, costToMakeMAD: 3.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_juice_avocado', name: 'Avocado Juice', category: 'cold', defaultPriceMAD: 15, costToMakeMAD: 5.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Category: Smoothies
+  // Category: Smoothies (Corrected: Banana 23, Chocolate 23 MAD)
   { id: 'drink_sm_ananas', name: 'Ananas Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_sm_banana', name: 'Banana Smoothie', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_banana', name: 'Banana Smoothie', category: 'cold', defaultPriceMAD: 23, costToMakeMAD: 6.8, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_sm_avocado', name: 'Avocado Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_sm_straw', name: 'Strawberry Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
-  { id: 'drink_sm_choc', name: 'Chocolate Smoothie', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_sm_choc', name: 'Chocolate Smoothie', category: 'cold', defaultPriceMAD: 23, costToMakeMAD: 6.8, beanWeightGrams: 0, isEspressoBased: false, active: true },
 
-  // Category: Les Crêpes (رشفة Rashfa)
+  // Category: Les Crêpes (Rashfa)
   { id: 'drink_crepe_nutella', name: 'Crêpe Nutella', category: 'water_other', defaultPriceMAD: 15, costToMakeMAD: 5.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_crepe_caramel', name: 'Crêpe Caramel', category: 'water_other', defaultPriceMAD: 18, costToMakeMAD: 5.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_crepe_oreo', name: 'Crêpe Oreo', category: 'water_other', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
