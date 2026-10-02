@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Drink, DrinkCategory, ExpenseShortcut, ExpenseCategory } from '../types';
-import { Settings, Plus, Edit2, Check, Coffee, Eye, EyeOff, Tag, Trash2 } from 'lucide-react';
+import { Settings, Plus, Edit2, Check, Coffee, Eye, EyeOff, Tag, Trash2, AlertTriangle, RotateCcw } from 'lucide-react';
+import { clearAllTransactionData } from '../repositories';
 
 interface DrinkCatalogManagerProps {
   drinks: Drink[];
@@ -22,6 +23,8 @@ export const DrinkCatalogManager: React.FC<DrinkCatalogManagerProps> = ({
   onToggleActiveShortcut,
 }) => {
   const [catalogTab, setCatalogTab] = useState<'drinks' | 'expenses'>('drinks');
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [clearStatus, setClearStatus] = useState<string | null>(null);
 
   // Drink Form State
   const [isCreatingDrink, setIsCreatingDrink] = useState(false);
@@ -128,41 +131,68 @@ export const DrinkCatalogManager: React.FC<DrinkCatalogManagerProps> = ({
     setEditingShortcutId(null);
   };
 
+  // Clear DB Data (Except Drink Menu Catalog)
+  const handleConfirmClearDbData = async () => {
+    try {
+      await clearAllTransactionData();
+      setClearStatus('Sales and transaction data cleared! Your drink menu catalog is preserved.');
+      setTimeout(() => {
+        setClearStatus(null);
+        setShowClearModal(false);
+      }, 2000);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Error clearing data: ${err.message}`);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-3 py-3 pb-28 space-y-4">
       {/* Header */}
-      <div className="bg-stone-900 border border-stone-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-stone-900 border border-stone-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-lg">
         <div className="flex items-center gap-2">
           <Settings className="w-5 h-5 text-amber-400" />
           <div>
-            <h2 className="text-lg font-bold text-stone-100">Master Catalog Manager</h2>
-            <p className="text-xs text-stone-400">Manage drinks menu, prices, and expense shortcuts</p>
+            <h2 className="text-lg font-bold text-stone-100">Master Catalog & Database Management</h2>
+            <p className="text-xs text-stone-400">Manage drinks menu, prices, and test data reset</p>
           </div>
         </div>
 
-        {/* Sub-tabs */}
-        <div className="flex items-center gap-1 bg-stone-950 p-1 rounded-xl border border-stone-800 text-xs">
+        <div className="flex items-center gap-2">
+          {/* Sub-tabs */}
+          <div className="flex items-center gap-1 bg-stone-950 p-1 rounded-xl border border-stone-800 text-xs">
+            <button
+              onClick={() => setCatalogTab('drinks')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
+                catalogTab === 'drinks'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <Coffee className="w-3.5 h-3.5" />
+              <span>Drinks Catalog</span>
+            </button>
+            <button
+              onClick={() => setCatalogTab('expenses')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
+                catalogTab === 'expenses'
+                  ? 'bg-emerald-600 text-white shadow'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <Tag className="w-3.5 h-3.5" />
+              <span>Expense Shortcuts</span>
+            </button>
+          </div>
+
+          {/* TEST BUTTON TO CLEAR DB DATA (PRESERVING MENU) */}
           <button
-            onClick={() => setCatalogTab('drinks')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-              catalogTab === 'drinks'
-                ? 'bg-amber-600 text-white shadow'
-                : 'text-stone-400 hover:text-stone-200'
-            }`}
+            onClick={() => setShowClearModal(true)}
+            className="flex items-center gap-1 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow"
+            title="Reset Sales & Expense Data (Keep Menu)"
           >
-            <Coffee className="w-3.5 h-3.5" />
-            <span>Drinks Catalog</span>
-          </button>
-          <button
-            onClick={() => setCatalogTab('expenses')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-              catalogTab === 'expenses'
-                ? 'bg-emerald-600 text-white shadow'
-                : 'text-stone-400 hover:text-stone-200'
-            }`}
-          >
-            <Tag className="w-3.5 h-3.5" />
-            <span>Expense Shortcuts</span>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Sales Data</span>
           </button>
         </div>
       </div>
@@ -286,7 +316,7 @@ export const DrinkCatalogManager: React.FC<DrinkCatalogManagerProps> = ({
           )}
 
           {/* Catalog Table */}
-          <div className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden">
+          <div className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden shadow">
             <div className="divide-y divide-stone-800">
               {drinks.map((drink) => (
                 <div
@@ -423,7 +453,7 @@ export const DrinkCatalogManager: React.FC<DrinkCatalogManagerProps> = ({
           )}
 
           {/* Shortcuts Table */}
-          <div className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden">
+          <div className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden shadow">
             <div className="divide-y divide-stone-800">
               {shortcuts.map((sc) => (
                 <div
@@ -470,6 +500,55 @@ export const DrinkCatalogManager: React.FC<DrinkCatalogManagerProps> = ({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CLEAR TEST DATA CONFIRMATION MODAL (PRESERVES MENU) */}
+      {showClearModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-stone-900 border border-rose-600/40 rounded-2xl p-5 w-full max-w-md space-y-4 shadow-2xl animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-rose-400" />
+                <h4 className="font-bold text-stone-100 text-sm">Reset All Sales & Transaction Data</h4>
+              </div>
+              <button onClick={() => setShowClearModal(false)} className="text-stone-400 hover:text-stone-200">
+                <Trash2 className="w-4 h-4 text-stone-500" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs text-stone-300 leading-relaxed">
+              <p>
+                This will clear all logged <strong className="text-stone-100">Sales, Kossor comps, Purchases, Personal Withdrawals, and Daily Closing records</strong>.
+              </p>
+              <p className="bg-emerald-950/80 border border-emerald-800 p-2.5 rounded-xl text-emerald-300 font-medium">
+                ✓ Your full Drink Menu Catalog & Expense Shortcuts will remain completely intact.
+              </p>
+              {clearStatus && (
+                <p className="font-mono text-emerald-400 font-bold bg-stone-950 p-2 rounded-lg">
+                  {clearStatus}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowClearModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-stone-800 text-stone-300 text-xs font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmClearDbData}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-1 shadow"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Confirm Reset</span>
+              </button>
             </div>
           </div>
         </div>

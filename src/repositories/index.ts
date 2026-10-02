@@ -20,6 +20,16 @@ export function getTodayId(): string {
   return `${year}-${month}-${day}`;
 }
 
+export async function clearAllTransactionData(): Promise<void> {
+  await db.sales.clear();
+  await db.kossor.clear();
+  await db.purchases.clear();
+  await db.personalSpend.clear();
+  await db.debtPayments.clear();
+  await db.dailyRecords.clear();
+  await DailyRecordRepository.getOrCreateRecord(getTodayId());
+}
+
 export const DrinkRepository = {
   async getAll(): Promise<Drink[]> {
     return await db.drinks.toArray();
