@@ -53,6 +53,16 @@ export const INITIAL_DRINKS: Drink[] = [
   { id: 'drink_sm_avocado', name: 'Avocado Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 8.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_sm_straw', name: 'Strawberry Smoothie', category: 'cold', defaultPriceMAD: 25, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
   { id: 'drink_sm_choc', name: 'Chocolate Smoothie', category: 'cold', defaultPriceMAD: 20, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+
+  // Category: Les Crêpes (رشفة Rashfa)
+  { id: 'drink_crepe_nutella', name: 'Crêpe Nutella', category: 'water_other', defaultPriceMAD: 15, costToMakeMAD: 5.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_crepe_caramel', name: 'Crêpe Caramel', category: 'water_other', defaultPriceMAD: 18, costToMakeMAD: 5.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_crepe_oreo', name: 'Crêpe Oreo', category: 'water_other', defaultPriceMAD: 20, costToMakeMAD: 6.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_crepe_ban_nutella', name: 'Crêpe Banana & Nutella', category: 'water_other', defaultPriceMAD: 23, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+  { id: 'drink_crepe_ban_caramel', name: 'Crêpe Banana & Caramel', category: 'water_other', defaultPriceMAD: 23, costToMakeMAD: 7.5, beanWeightGrams: 0, isEspressoBased: false, active: true },
+
+  // Category: Special Drinks
+  { id: 'drink_italian_choc', name: 'مشروب الشوكولاتة الإيطالية (Italian Hot Chocolate)', category: 'hot', defaultPriceMAD: 19, costToMakeMAD: 6.0, beanWeightGrams: 0, isEspressoBased: false, active: true },
 ];
 
 export const INITIAL_MODIFIERS: Modifier[] = [
