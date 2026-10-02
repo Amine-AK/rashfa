@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ExpenseShortcut, PurchaseEntry, PersonalSpendShortcut, PersonalSpendEntry, ExpenseCategory, PersonalCategory } from '../types';
-import { ShoppingBag, Plus, Trash2, Edit2, Check, X, Tag, Settings, Wallet, User, Coffee, Utensils, Car } from 'lucide-react';
+import { ShoppingBag, Plus, Trash2, Edit2, Check, X, Tag, Settings, Wallet, User } from 'lucide-react';
 
 interface ExpensesTabProps {
   shortcuts: ExpenseShortcut[];
@@ -39,6 +39,10 @@ export const ExpensesTab: React.FC<ExpensesTabProps> = ({
   const [selectedShortcut, setSelectedShortcut] = useState<ExpenseShortcut | null>(null);
   const [overrideCost, setOverrideCost] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
+
+  // Edit Default Price Modal State for Business Shortcuts
+  const [editingPriceShortcut, setEditingPriceShortcut] = useState<ExpenseShortcut | null>(null);
+  const [newDefaultPriceInput, setNewDefaultPriceInput] = useState<string>('');
 
   // Custom Business Expense Form
   const [customItem, setCustomItem] = useState('');
@@ -80,6 +84,27 @@ export const ExpensesTab: React.FC<ExpensesTabProps> = ({
 
     await onAddPurchase(itemName, totalCost, selectedShortcut.category);
     setSelectedShortcut(null);
+  };
+
+  // Modify Default Shortcut Price on the fly
+  const handleOpenPriceEditor = (e: React.MouseEvent, shortcut: ExpenseShortcut) => {
+    e.stopPropagation(); // Don't trigger log modal
+    setEditingPriceShortcut(shortcut);
+    setNewDefaultPriceInput(String(shortcut.defaultCostMAD));
+  };
+
+  const handleSaveUpdatedPrice = async () => {
+    if (!editingPriceShortcut) return;
+    const newPrice = parseFloat(newDefaultPriceInput);
+    if (isNaN(newPrice) || newPrice < 0) return;
+
+    const updated: ExpenseShortcut = {
+      ...editingPriceShortcut,
+      defaultCostMAD: newPrice,
+    };
+
+    await onSaveShortcut(updated);
+    setEditingPriceShortcut(null);
   };
 
   const handleAddCustomPurchase = async (e: React.FormEvent) => {
@@ -164,36 +189,48 @@ export const ExpensesTab: React.FC<ExpensesTabProps> = ({
       {/* SECTION 1: BUSINESS RESTOCKING EXPENSES */}
       {activeSection === 'business' && (
         <div className="space-y-4">
-          {/* QUICK BUSINESS EXPENSE SHORTCUTS TAP GRID */}
+          {/* QUICK BUSINESS EXPENSE SHORTCUTS TAP GRID WITH INLINE PRICE EDITING */}
           <div className="bg-stone-900 border border-stone-800 p-4 rounded-2xl space-y-3">
             <div className="flex items-center justify-between border-b border-stone-800 pb-2">
               <h3 className="font-bold text-sm text-stone-100 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-emerald-400" />
                 <span>Restocking Expense Shortcuts</span>
               </h3>
-              <span className="text-[11px] text-stone-400">Tap to log milk, coffee beans, fruit</span>
+              <span className="text-[11px] text-stone-400">Tap + to log, or tap ✏️ to edit shortcut price</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
               {activeBusinessShortcuts.map((sc) => (
-                <button
+                <div
                   key={sc.id}
-                  disabled={isDayClosed}
                   onClick={() => handleOpenShortcutModal(sc)}
-                  className="bg-stone-950 hover:bg-emerald-950/40 border border-stone-800 hover:border-emerald-700/60 p-3 rounded-2xl text-left flex flex-col justify-between transition-all active:scale-95 min-h-[80px]"
+                  className="bg-stone-950 hover:bg-emerald-950/40 border border-stone-800 hover:border-emerald-700/60 p-3 rounded-2xl flex flex-col justify-between transition-all cursor-pointer select-none relative group min-h-[88px]"
                 >
-                  <span className="font-bold text-xs text-stone-100 leading-snug line-clamp-2">
-                    {sc.name}
-                  </span>
+                  {/* Item Name + Quick Price Edit Button */}
+                  <div className="flex items-start justify-between gap-1">
+                    <span className="font-bold text-xs text-stone-100 leading-snug line-clamp-2">
+                      {sc.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleOpenPriceEditor(e, sc)}
+                      className="p-1 rounded-lg text-stone-500 hover:text-amber-300 hover:bg-stone-800 transition-colors"
+                      title="Modify default price"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Price Display & Plus Button */}
                   <div className="flex items-end justify-between mt-2 pt-1 border-t border-stone-800/60">
                     <span className="text-sm font-black font-mono text-emerald-400">
                       {sc.defaultCostMAD} <span className="text-[10px] font-semibold text-emerald-500">DH</span>
                     </span>
-                    <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-xs">
+                    <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-xs border border-emerald-500/40">
                       +
                     </span>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -460,6 +497,58 @@ export const ExpensesTab: React.FC<ExpensesTabProps> = ({
               >
                 <Check className="w-4 h-4" />
                 <span>Confirm Expense</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT DEFAULT SHORTCUT PRICE MODAL */}
+      {editingPriceShortcut && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-stone-900 border border-amber-600/40 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+              <div className="flex items-center gap-2">
+                <Edit2 className="w-4 h-4 text-amber-400" />
+                <h4 className="font-bold text-stone-100 text-sm">Modify Default Shortcut Price</h4>
+              </div>
+              <button onClick={() => setEditingPriceShortcut(null)} className="text-stone-400 hover:text-stone-200">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-stone-400">
+                Item: <strong className="text-stone-100">{editingPriceShortcut.name}</strong>
+              </p>
+
+              <div>
+                <label className="text-xs font-bold text-stone-300 block mb-1">New Default Price (DH / MAD):</label>
+                <input
+                  type="number"
+                  step="0.5"
+                  value={newDefaultPriceInput}
+                  onChange={(e) => setNewDefaultPriceInput(e.target.value)}
+                  className="w-full bg-stone-950 border-2 border-amber-500/80 rounded-xl px-3.5 py-2.5 text-xl font-bold font-mono text-emerald-400 focus:outline-none focus:border-amber-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingPriceShortcut(null)}
+                className="flex-1 py-2.5 rounded-xl bg-stone-800 text-stone-300 text-xs font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveUpdatedPrice}
+                className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center justify-center gap-1 shadow"
+              >
+                <Check className="w-4 h-4" />
+                <span>Save New Price</span>
               </button>
             </div>
           </div>
