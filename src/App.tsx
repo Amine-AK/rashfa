@@ -37,6 +37,7 @@ import { ClosingRoutine } from './components/ClosingRoutine';
 import { Dashboard } from './components/Dashboard';
 import { AuditLedger } from './components/AuditLedger';
 import { DrinkCatalogManager } from './components/DrinkCatalogManager';
+import { PWAInstallBanner } from './components/PWAInstallBanner';
 
 export const App: React.FC = () => {
   const todayId = getTodayId();
@@ -353,6 +354,9 @@ export const App: React.FC = () => {
           />
         )}
       </main>
+
+      {/* Floating PWA Install Banner */}
+      <PWAInstallBanner />
     </div>
   );
 };
