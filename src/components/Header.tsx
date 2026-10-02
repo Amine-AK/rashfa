@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DailySummary } from '../types';
-import { Coffee, Lock, DollarSign, Gift, Layers, BarChart3, Receipt, Settings, ShoppingBag } from 'lucide-react';
+import { Coffee, Lock, DollarSign, Gift, Layers, BarChart3, Receipt, Settings, ShoppingBag, Cloud, Check, X } from 'lucide-react';
+import { syncToNeonDB } from '../db/neon';
+import { db } from '../db';
 
 interface HeaderProps {
   summary: DailySummary;
@@ -17,9 +19,38 @@ export const Header: React.FC<HeaderProps> = ({
   isKossorMode,
   setIsKossorMode,
 }) => {
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [neonUrl, setNeonUrl] = useState(import.meta.env.VITE_DATABASE_URL || '');
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSyncToNeon = async () => {
+    if (!neonUrl.trim()) {
+      alert('Please enter your Neon PostgreSQL Connection String (DATABASE_URL).');
+      return;
+    }
+    try {
+      setIsSyncing(true);
+      setSyncStatus('Connecting to Neon DB...');
+      const drinks = await db.drinks.toArray();
+      const records = await db.dailyRecords.toArray();
+      const sales = await db.sales.toArray();
+      const purchases = await db.purchases.toArray();
+
+      await syncToNeonDB(neonUrl.trim(), drinks, records, sales, purchases);
+      setSyncStatus('Successfully backed up to Neon DB!');
+      setTimeout(() => setSyncStatus(null), 3000);
+    } catch (err: any) {
+      console.error(err);
+      setSyncStatus(`Sync Error: ${err.message || 'Failed to sync'}`);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 bg-stone-950/95 backdrop-blur border-b border-stone-800 shadow-xl">
-      {/* Top Bar: Revenue, Net Cash, Mode Switch */}
+      {/* Top Bar: Revenue, Net Cash, Mode Switch, Neon Cloud Sync */}
       <div className="max-w-7xl mx-auto px-3 py-2">
         <div className="flex items-center justify-between gap-2">
           {/* Logo & Status */}
@@ -45,20 +76,31 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Core Numbers - Header Financial Truth */}
-          <div className="flex items-center gap-3 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded-xl">
-            <div className="text-right">
-              <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Gross Sales</p>
-              <p className="text-base font-extrabold text-emerald-400 font-mono leading-none">
-                {summary.grossRevenueMAD} <span className="text-xs font-normal">MAD</span>
-              </p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded-xl">
+              <div className="text-right">
+                <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Gross Sales</p>
+                <p className="text-base font-extrabold text-emerald-400 font-mono leading-none">
+                  {summary.grossRevenueMAD} <span className="text-xs font-normal">MAD</span>
+                </p>
+              </div>
+              <div className="h-6 w-px bg-stone-800" />
+              <div className="text-right">
+                <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Net Cash</p>
+                <p className="text-base font-extrabold text-amber-400 font-mono leading-none">
+                  {summary.netCashPositionMAD} <span className="text-xs font-normal">MAD</span>
+                </p>
+              </div>
             </div>
-            <div className="h-6 w-px bg-stone-800" />
-            <div className="text-right">
-              <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">Net Cash</p>
-              <p className="text-base font-extrabold text-amber-400 font-mono leading-none">
-                {summary.netCashPositionMAD} <span className="text-xs font-normal">MAD</span>
-              </p>
-            </div>
+
+            {/* Neon Cloud Sync Button */}
+            <button
+              onClick={() => setShowSyncModal(true)}
+              className="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-cyan-400 border border-cyan-800/60 transition-all shadow"
+              title="Neon PostgreSQL Cloud Backup"
+            >
+              <Cloud className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -161,6 +203,65 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
         </div>
       </div>
+
+      {/* Neon DB Backup Modal */}
+      {showSyncModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-stone-900 border border-cyan-500/40 rounded-2xl p-5 w-full max-w-md space-y-4 shadow-2xl animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+              <div className="flex items-center gap-2">
+                <Cloud className="w-5 h-5 text-cyan-400" />
+                <h4 className="font-bold text-stone-100 text-sm">Neon PostgreSQL Backup & Sync</h4>
+              </div>
+              <button onClick={() => setShowSyncModal(false)} className="text-stone-400 hover:text-stone-200">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-stone-400 leading-relaxed">
+                Connect your free <strong className="text-stone-200">Neon.tech</strong> PostgreSQL database to backup all sales, expenses, and daily closings to the cloud.
+              </p>
+
+              <div>
+                <label className="text-xs text-stone-400 block mb-1">Neon DATABASE_URL</label>
+                <input
+                  type="password"
+                  placeholder="postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require"
+                  value={neonUrl}
+                  onChange={(e) => setNeonUrl(e.target.value)}
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              {syncStatus && (
+                <div className="bg-stone-950 p-3 rounded-xl border border-stone-800 text-xs font-mono text-cyan-300">
+                  {syncStatus}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowSyncModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-stone-800 text-stone-300 text-xs font-semibold"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                disabled={isSyncing}
+                onClick={handleSyncToNeon}
+                className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center justify-center gap-1 shadow disabled:opacity-50"
+              >
+                <Cloud className="w-4 h-4" />
+                <span>{isSyncing ? 'Syncing...' : 'Sync to Neon DB'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
